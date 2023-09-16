@@ -1,0 +1,103 @@
+service: serverless-api-golang
+
+frameworkVersion: "3"
+
+plugins:
+  - serverless-offline
+
+# serverless-webpack configuration for ECMC6
+# Enable auto-packing of external modules
+# Multiple deploy stages
+# e.g. sls deploy --stage staging
+custom:
+  defaultStage: dev
+  stage: ${opt:stage, self:provider.stage}
+  profiles:
+    prod: personalProfile
+    staging: personalProfile
+    dev: personalProfile
+
+provider:
+  name: aws
+  runtime: go1.x
+  region: us-east-1
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+package:
+ exclude:
+   - ./**
+ include:
+   - ./build/**
+
+functions:
+  # health:
+  #   handler: build/main
+  #   events:
+  #     - http:
+  #         path: api/health
+  #         method: get
+
+  get:
+    handler: build/main
+    events:
+      - http:
+          path: /
+          method: get
+
+  create:
+    handler: build/main
+    events:
+      - http:
+          path: /
+          method: post
+
+  # create_random:
+  #   handler: api/create_random.create
+  #   events:
+  #     - http:
+  #         path: api/user/random
+  #         method: get
+
+  update:
+    handler: build/main
+    events:
+      - http:
+          path: /
+          method: put
+
+  delete:
+    handler: build/main
+    events:
+      - http:
+          path: /
+          method: delete
+
+resources:
+  Resources:
+    MembersDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: email
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: email
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}

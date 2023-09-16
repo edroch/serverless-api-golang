@@ -1,0 +1,24 @@
+{
+  "name": "serverless-api-golang",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy:dev": "export AWS_PROFILE=erocha-awscert && sls package -s dev && sls deploy -s dev --package .serverless",
+    "remove:dev": "export AWS_PROFILE=erocha-awscert && sls remove -s dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edroch/serverless-api-golang.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/edroch/serverless-api-golang/issues"
+  },
+  "homepage": "https://github.com/edroch/serverless-api-golang#readme",
+  "dependencies": {
+    "serverless": "^3.35.1",
+    "serverless-offline": "^12.0.4"
+  }
+}
