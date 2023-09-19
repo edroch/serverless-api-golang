@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/edroch/serverless-api-golang/pkg/handlers"
 	"os"
+
+	"github.com/edroch/serverless-api-golang/pkg/handlers"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -31,6 +32,7 @@ func main() {
 const tableName = "serverless-api-golang-dev"
 
 func handler(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+
 	switch req.HTTPMethod {
 	case "GET":
 		return handlers.GetUser(req, tableName, dynaClient)

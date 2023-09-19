@@ -33,6 +33,11 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
 
 package:
  exclude:
@@ -41,63 +46,73 @@ package:
    - ./build/**
 
 functions:
-  # health:
+  # any:
   #   handler: build/main
   #   events:
   #     - http:
-  #         path: api/health
-  #         method: get
+  #         path: users
+  #         method: any
 
-  get:
+  getUsers:
     handler: build/main
     events:
       - http:
-          path: /
+          path: users
           method: get
 
-  create:
+  getUser:
     handler: build/main
     events:
       - http:
-          path: /
+          path: users/{id}
+          method: get
+
+  createUser:
+    handler: build/main
+    events:
+      - http:
+          path: users
           method: post
 
-  # create_random:
-  #   handler: api/create_random.create
-  #   events:
-  #     - http:
-  #         path: api/user/random
-  #         method: get
-
-  update:
+  updateUser:
     handler: build/main
     events:
       - http:
-          path: /
+          path: users/{id}
           method: put
 
-  delete:
+  deleteUser:
     handler: build/main
     events:
       - http:
-          path: /
+          path: users/{id}
           method: delete
 
 resources:
   Resources:
-    MembersDynamoDbTable:
+    UsersDynamoDbTable:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Delete
       Properties:
-        AttributeDefinitions:
-          -
-            AttributeName: email
-            AttributeType: S
-        KeySchema:
-          -
-            AttributeName: email
-            KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: emailIndex
+            KeySchema:
+              - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         TableName: ${self:provider.environment.DYNAMODB_TABLE}

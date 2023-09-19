@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deploy:dev": "export AWS_PROFILE=erocha-awscert && sls package -s dev && sls deploy -s dev --package .serverless",
+    "build:dev": "GOARCH=amd64 GOOS=linux go build ./cmd/main.go",
+    "mvbuild:dev": "rm ./build/main || true && mv ./main ./build || true",
+    "deploy:dev": "npm run build:dev && npm run mvbuild:dev && export AWS_PROFILE=erocha-awscert && sls package -s dev && sls deploy -s dev --package .serverless",
     "remove:dev": "export AWS_PROFILE=erocha-awscert && sls remove -s dev"
   },
   "repository": {
