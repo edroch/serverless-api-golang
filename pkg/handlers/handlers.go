@@ -15,6 +15,7 @@ type ErrorBody struct {
 	ErrorMsg *string `json:"error,omitempty"`
 }
 
+// GetUser intermediates dataflow between datasource (dynamodb) and api response
 func GetUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (
 	*events.APIGatewayProxyResponse, error,
 ) {
@@ -38,6 +39,7 @@ func GetUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dyn
 
 }
 
+// CreateUser intermediates dataflow between datasource (dynamodb) and api response
 func CreateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (
 	*events.APIGatewayProxyResponse, error,
 ) {
@@ -50,6 +52,7 @@ func CreateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient 
 	return apiResponse(http.StatusCreated, result)
 }
 
+// UpdateUser intermediates dataflow between datasource (dynamodb) and api response
 func UpdateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (
 	*events.APIGatewayProxyResponse, error,
 ) {
@@ -62,6 +65,7 @@ func UpdateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient 
 	return apiResponse(http.StatusOK, result)
 }
 
+// DeleteUser intermediates dataflow between datasource (dynamodb) and api response
 func DeleteUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (
 	*events.APIGatewayProxyResponse, error,
 ) {
@@ -75,6 +79,7 @@ func DeleteUser(req events.APIGatewayProxyRequest, tableName string, dynaClient 
 	return apiResponse(http.StatusOK, nil)
 }
 
+// UnhandledMethod for unsupported api requests
 func UnhandledMethod() (*events.APIGatewayProxyResponse, error) {
 	return apiResponse(http.StatusMethodNotAllowed, ErrorMethodNotAllowed)
 }

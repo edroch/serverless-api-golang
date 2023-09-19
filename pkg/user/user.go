@@ -35,6 +35,7 @@ type User struct {
 	DateOfBirth string `json:"dob"`
 }
 
+// FetchUser get single user from dynamodb by id primary key
 func FetchUser(id, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (*User, error) {
 
 	input := &dynamodb.GetItemInput{
@@ -63,6 +64,7 @@ func FetchUser(id, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (*Use
 	return item, nil
 }
 
+// FetchUserByEmail get single user from dynamodb by email index
 func FetchUserByEmail(email, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (*User, error) {
 
 	// Query the secondary index
@@ -102,6 +104,7 @@ func FetchUserByEmail(email, tableName string, dynaClient dynamodbiface.DynamoDB
 	}
 }
 
+// FetchUsers get all users from dynamodb
 func FetchUsers(tableName string, dynaClient dynamodbiface.DynamoDBAPI) (*[]User, error) {
 	input := &dynamodb.ScanInput{
 		TableName: aws.String(tableName),
@@ -116,6 +119,7 @@ func FetchUsers(tableName string, dynaClient dynamodbiface.DynamoDBAPI) (*[]User
 	return item, nil
 }
 
+// CreateUser inserts a new user into dynamodb table
 func CreateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (
 	*User,
 	error,
@@ -153,6 +157,7 @@ func CreateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient 
 	return &u, nil
 }
 
+// UpdateUser update an existing user in dynamodb table
 func UpdateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (
 	*User,
 	error,
@@ -189,6 +194,7 @@ func UpdateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient 
 	return &u, nil
 }
 
+// DeleteUser an existing user in dynamodb table
 func DeleteUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI) error {
 
 	id := req.PathParameters["id"]

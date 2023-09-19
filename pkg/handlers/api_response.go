@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
+// apiResponse handles response body and http status codes
 func apiResponse(status int, body interface{}) (*events.APIGatewayProxyResponse, error) {
 	resp := events.APIGatewayProxyResponse{Headers: map[string]string{"Content-Type": "application/json"}}
 	resp.StatusCode = status
